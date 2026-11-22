@@ -27,7 +27,7 @@ ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
 *State in two lines why the second and third bullets agree, and what that tells you about what a SHA-256 digest reveals.*
 
 ### Explanation
-Both results agree because the SHA-256 digest contains the internal state after processing the original message and its padding, allowing the algorihtm to continue from that state. 
+Both results agree because the SHA-256 digest contains the internal state after processing the original message and its padding, allowing the algorithm to continue from that state. 
 
 This means that knowing a SHA-256 digest makes it possible to extend the hashed message without knowing its original contents.
 
