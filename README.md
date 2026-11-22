@@ -10,8 +10,16 @@ To run the automated tests:
 ```bash
 python -m unittest discover -s tests
 ```
+To verify the SHA-256 implementation from part A, run:
+```bash
+python -c "from sha256 import sha256; print(sha256(b'abc').hex())"
+```
+Expected output:
+```bash
+ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
+```
 
-[TO DO - Explain how to run each independent module]
+[TO DO - Explain measure.py, mac.py, forge.py and crack.py]
 
 ## 2. A3 - Resuming from a known state
 
@@ -19,10 +27,21 @@ python -m unittest discover -s tests
 *State in two lines why the second and third bullets agree, and what that tells you about what a SHA-256 digest reveals.*
 
 ### Explanation
-[TO DO]
+Both results agree because the SHA-256 digest contains the internal state after processing the original message and its padding, allowing the algorihtm to continue from that state. 
+
+This means that knowing a SHA-256 digest makes it possible to extend the hashed message without knowing its original contents.
 
 ### Verification
-[TO DO - Verify both computations produce the expected digest]
+Using `base = b"the first part"` and `suffix = b"and the rest"`, the original digest is:
+```bash
+d2bba6892bc661a48fd99f726bdf084a4e53e9644d03f06002eb2c1d11ac194d
+```
+
+Resuming SHA-256 from that digest with `already = 64` produces:
+```bash
+cb32e653bcd5ed0800832787b264fab57a61f652a391177224fa3cbb1aab740d
+```
+This matches the result of hashing `base + padding(len(base)) + suffix` directly. 
 
 ## 3. B1 - The avalanche effect
 
