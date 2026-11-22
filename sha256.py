@@ -1,4 +1,3 @@
-import hashlib
 
 # A1: Padding
 
@@ -15,21 +14,6 @@ def padding(msglen: int) -> bytes:
 
     return first_byte + b'\x00' * zeros + length
 
-# Testing A1 results:
-
-# for n in [0, 3, 55, 56, 63, 64, 119, 1000]:
-#     p = padding(n)
-#     print(n, len(p), (n + len(p)) // 64)
-
-# # output: 
-# 0 64 1
-# 3 61 1
-# 55 9 1
-# 56 72 2
-# 63 65 2
-# 64 64 2
-# 119 9 2
-# 1000 24 16
 
 # A2: Compression function and the full hash
 
@@ -161,30 +145,6 @@ def sha256(data: bytes, state: list[int] = None, already: int = 0) -> bytes:
         digest += word.to_bytes(4, 'big')
 
     return digest
-
-# Testing A2 + A3 sha256 resutls:
-
-# messages = [
-#     b"",
-#     b"abc",
-#     b"cryptography",
-#     b"Cryptography",
-#     b"a" * 64,
-#     b"a" * 100
-# ]
-
-# for msg in messages:
-#     result = sha256(msg).hex()
-#     expected = hashlib.sha256(msg).hexdigest()
-
-#     print("Match:", result == expected)
-
-# Match: True
-# Match: True
-# Match: True
-# Match: True
-# Match: True
-# Match: True
 
 
 # A3: Resuming from a known state
