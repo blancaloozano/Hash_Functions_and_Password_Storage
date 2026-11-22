@@ -136,18 +136,23 @@ def compress(state: list[int], block: bytes) -> list[int]:
 
     return new_state
 
-def sha256(data: bytes) -> bytes:
+# A2 + A3: Full sha256 function
 
+def sha256(data: bytes, state: list[int] = None, already: int = 0) -> bytes:
 
-    # Add padding to the original message
-    message = data + padding(len(data))
-    state = H.copy()
+     # Add padding to the original message considering previously processed bytes
+    message = data + padding(already + len(data))
 
+    # Initialize or resume hash state
+    if state is None:
+        state = H.copy()
+    else:
+        state = state.copy()
 
     # Process each 64-byte block
     for i in range(0, len(message), 64):
-        block = message[i:i+64]
-        state = compress(state, block)
+            block = message[i:i+64]
+            state = compress(state, block)
 
     # Convert the final state into bytes
     digest = b''
@@ -157,29 +162,43 @@ def sha256(data: bytes) -> bytes:
 
     return digest
 
-# Testing A2 resutls:
+# Testing A2 + A3 sha256 resutls:
 
-messages = [
-    b"",
-    b"abc",
-    b"cryptography",
-    b"Cryptography",
-    b"a" * 64,
-    b"a" * 100
-]
+# messages = [
+#     b"",
+#     b"abc",
+#     b"cryptography",
+#     b"Cryptography",
+#     b"a" * 64,
+#     b"a" * 100
+# ]
 
-for msg in messages:
-    result = sha256(msg).hex()
-    expected = hashlib.sha256(msg).hexdigest()
+# for msg in messages:
+#     result = sha256(msg).hex()
+#     expected = hashlib.sha256(msg).hexdigest()
 
-    print("Match:", result == expected)
+#     print("Match:", result == expected)
 
+# Match: True
+# Match: True
+# Match: True
+# Match: True
+# Match: True
+# Match: True
 
 
 # A3: Resuming from a known state
 
+def state_from_digest(digest: bytes) -> list[int]:
 
-# def sha256(data: bytes, state: list[int] = None, already: int = 0) -> bytes:
+    if len(digest) != 32:
+        raise ValueError("Invalid digest length.")
 
-# def state_from_digest(digest: bytes) -> list[int]:
+    state = []
+
+    for i in range(0, 32, 4):
+        word = int.from_bytes(digest[i:i+4], 'big')
+        state.append(word)
+
+    return state
 
