@@ -68,15 +68,16 @@ if __name__ == "__main__":
     # Generate the dictionary
     dictionary = make_dictionary()
 
-    # Controlled test hashes
-    test_passwords = [
-        "123456", "password", "123456789", "qwerty",
-        "abc123", "letmein", "monkey", "dragon"
-    ]
-
+    # Official hashes from the handout
     hashes = [
-        hashlib.sha256(password.encode()).hexdigest()
-        for password in test_passwords
+        "6382deaf1f5dc6e792b76db4a4a7bf2ba468884e000b25e7928e621e27fb23cb",
+        "a941a4c4fd0c01cddef61b8be963bf4c1e2b0811c037ce3f1835fddf6ef6c223",
+        "203b70b5ae883932161bbd0bded9357e763e63afce98b16230be33f0b94c2cc5",
+        "a9c43be948c5cabd56ef2bacffb77cdaa5eec49dd5eb0cc4129cf3eda5f0e74c",
+        "e4ad93ca07acb8d908a3aa41e920ea4f4ef4f26e7f86cf8291c5db289780a5ae",
+        "65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5",
+        "000c285457fc971f862a79b786476c78812c8897063c6fa9c045f579a3b2d63f",
+        "1c8bfe8f801d79745c4631d09fff36c82aa37fc4cce4fc946683d7b336b63032",
     ]
 
     # Measure the execution time
