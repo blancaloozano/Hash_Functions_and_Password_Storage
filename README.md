@@ -18,8 +18,13 @@ Expected output:
 ```bash
 ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
 ```
+To run the avalanche effect experiment from B1, run:
+```bash
+python measure.py
+```
+This experiment performs 2,000 trials using random messages of 32 bytes and a fixed seed of 20357 to ensure reproducibility. It displays the mean, minimum, maximum and a histogram with bins of 8 bits.
 
-[TO DO - Explain measure.py, mac.py, forge.py and crack.py]
+[TO DO - Explain mac.py, forge.py and crack.py]
 
 ## 2. A3 - Resuming from a known state
 
@@ -46,13 +51,41 @@ This matches the result of hashing `base + padding(len(base)) + suffix` directly
 ## 3. B1 - The avalanche effect
 
 ### Measurements
-[TO DO - Mean, minimum, maximum and histogram with 8-bit bins]
+
+The experiment was performed by generating random messages, flipping a single random bit and counting the number of different bits between the original and modified SHA-256 digests.
+
+| Parameter | Value |
+|---|---:|
+| Number of trials | 2000 |
+| Message length | 32 bytes |
+| Random seed | 20357 |
+| Mean | 128.2795 bits |
+| Minimum | 105 bits |
+| Maximum | 158 bits |
+| Theoretical mean | 128 bits |
+| Absolute deviation | 0.2795 bits |
+
+Histogram with 8-bit bins:
+![B1 avalanche histogram][images/b1_avalanche_histogram.png]
+
+| Bin | Count |
+|---|---:|
+| 104-111 | 33 |
+| 112-119 | 220 |
+| 120-127 | 639 |
+| 128-135 | 750 |
+| 136-143 | 309 |
+| 144-151 | 48 |
+| 152-159 | 1 |
 
 ### Question
 *State the value theory predicts and how far your mean is from it.*
 
 ### Explanation
-[TO DO]
+
+For an ideal 256-bit hash function, changing a single input bit should change each output bit with a probability of 50%. Therefore, the theoretical mean is 256 × 0.5 = 128 bits.
+
+The measured mean is 128.2795 bits, which is only 0.2795 bits above the theoretical value (a relative deviation of 0.2184%). These results are consistent with the expected avalanche effect of SHA-256.
 
 ## 4. B2 - The birthday bound
 
