@@ -66,7 +66,7 @@ The experiment was performed by generating random messages, flipping a single ra
 | Absolute deviation | 0.2795 bits |
 
 Histogram with 8-bit bins:
-![B1 avalanche histogram][images/b1_avalanche_histogram.png]
+![B1 avalanche histogram](images/b1_avalanche_histogram.png)
 
 | Bin | Count |
 |---|---:|
