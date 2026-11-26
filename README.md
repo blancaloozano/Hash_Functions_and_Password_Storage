@@ -176,6 +176,7 @@ The following results were obtained by running `python crack.py` against the eig
 | Hashes computed | 200,000 |
 | Passwords recovered | 8/8 |
 | Execution time | 0.187547 seconds |
+
 | SHA-256 hash | Recovered password |
 |---|---|
 | `6382deaf1f5dc6e792b76db4a4a7bf2ba468884e000b25e7928e621e27fb23cb` | `football` |
