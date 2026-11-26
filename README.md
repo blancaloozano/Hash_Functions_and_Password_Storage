@@ -18,11 +18,17 @@ Expected output:
 ```bash
 ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
 ```
-To run the avalanche effect experiment from B1, run:
+To run the avalanche effect and birthday bound experiments
+from Part B, install matplotlib and run:
+
 ```bash
+python -m pip install matplotlib
 python measure.py
 ```
-This experiment performs 2,000 trials using random messages of 32 bytes and a fixed seed of 20357 to ensure reproducibility. It displays the mean, minimum, maximum and a histogram with bins of 8 bits.
+
+The program displays the experimental measurements,
+calculates the fitted slope and saves both plots in
+the `images/` directory.
 
 [TO DO - Explain mac.py, forge.py and crack.py]
 
