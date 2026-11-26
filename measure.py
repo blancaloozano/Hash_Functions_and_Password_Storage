@@ -2,7 +2,6 @@ import random
 import math
 from pathlib import Path
 from sha256 import sha256
-import matplotlib.pyplot as plt
 from statistics import linear_regression
 
 
@@ -65,6 +64,12 @@ def print_histogram(results: list[int]) -> None:
 
 def plot_histogram(results: list[int], output_path: str) -> None:
 
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError:
+        print("Matplotlib not installed. Histogram plot skipped.")
+        return
+
     # Count values in 8-bit bins
     histogram = {}
 
@@ -84,6 +89,8 @@ def plot_histogram(results: list[int], output_path: str) -> None:
     plt.tight_layout()
     plt.savefig(output_path)
     plt.close()
+
+    print(f"Saved plot to {output_path}")
 
 # B2: The birthday bound
 
@@ -131,6 +138,12 @@ def plot_birthday_bound(widths: list[int], counts: list[int],
     # Fit a straight line
     slope, intercept = linear_regression(widths, log_hashes)
 
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError:
+        print("Matplotlib not installed. Birthday bound plot skipped.")
+        return slope
+
     fitted = [slope * n + intercept for n in widths]
 
     # Compute the theoretical prediction
@@ -156,6 +169,8 @@ def plot_birthday_bound(widths: list[int], counts: list[int],
     plt.savefig(output_path)
     plt.close()
 
+    print(f"Saved plot to {output_path}")
+
     return slope
 
 if __name__ == "__main__":
@@ -175,7 +190,6 @@ if __name__ == "__main__":
     print_histogram(results)
 
     plot_histogram(results, "images/b1_avalanche_histogram.png")
-    print("\nSaved plot to images/b1_avalanche_histogram.png")
 
     # B2: Birthday bound experiment
     print("\nB2 - The birthday bound")
@@ -205,4 +219,3 @@ if __name__ == "__main__":
 
     print(f"\nMeasured slope: {slope:.6f}")
     print("Theoretical slope: 0.5")
-    print("\nSaved plot to images/b2_birthday_bound.png")
