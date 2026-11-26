@@ -66,6 +66,7 @@ The experiment was performed by generating random messages, flipping a single ra
 | Absolute deviation | 0.2795 bits |
 
 Histogram with 8-bit bins:
+
 ![B1 avalanche histogram](images/b1_avalanche_histogram.png)
 
 | Bin | Count |
@@ -90,14 +91,58 @@ The measured mean is 128.2795 bits, which is only 0.2795 bits above the theoreti
 ## 4. B2 - The birthday bound
 
 ### Measurements
-[TO DO - Collision table for 16, 20, 24, 28, 32 and 36 bits]
-[TO DO - Plot log₂(hashes) against n, fit a straight line and report the measured slope]
+
+The experiment was performed by truncating SHA-256 to
+different output lengths and hashing consecutive decimal
+strings until the first collision was found.
+
+Collision table for 16, 20, 24, 28, 32 and 36 bits:
+
+| Bits | First string | Second string | Hashes computed | Prediction | Ratio |
+|---:|---:|---:|---:|---:|---:|
+| 16 | 157 | 251 | 252 | 320.85 | 0.7854 |
+| 20 | 270 | 1877 | 1878 | 1283.39 | 1.4633 |
+| 24 | 4163 | 8864 | 8865 | 5133.57 | 1.7269 |
+| 28 | 16095 | 23815 | 23816 | 20534.30 | 1.1598 |
+| 32 | 69235 | 95303 | 95304 | 82137.20 | 1.1603 |
+| 36 | 63964 | 393644 | 393645 | 328548.78 | 1.1981 |
+
+
+Plot log₂(hashes) against n, fit a straight line and report the measured slope:
+
+![B2 birthday bound](images/b2_birthday_bound.png)
+
+| Parameter | Value |
+|---|---:|
+| Measured slope | 0.510484 |
+| Theoretical slope | 0.5 |
+| Absolute deviation | 0.010484 |
+| Relative deviation | 2.10% |
+
 
 ### Question
 *State what you measured, what the theory predicts, and whether a single measurement per width is enough to tell them apart.*
 
 ### Explanation
-[TO DO]
+
+According to the birthday bound, the expected number of
+hashes required to find a collision is approximately
+sqrt(pi/2) × 2^(n/2). Therefore, the theoretical slope
+of log2(hashes) against the output length is 0.5.
+
+The measured slope is 0.510484, which is close to the
+theoretical value. This means that each additional output
+bit increases the collision resistance by approximately
+half a bit of computational work.
+
+A single measurement per width is not sufficient to
+establish a statistically significant difference between
+the measured and theoretical slopes, since collision
+searches have natural statistical variability.
+
+Multiple independent experiments per width would be
+necessary to obtain more reliable estimates. The measured
+results are consistent with the birthday bound.
 
 ## 5. C1 - The forgery
 
