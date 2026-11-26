@@ -1,5 +1,6 @@
 import random
 import math
+from pathlib import Path
 from sha256 import sha256
 import matplotlib.pyplot as plt
 from statistics import linear_regression
@@ -159,6 +160,8 @@ def plot_birthday_bound(widths: list[int], counts: list[int],
 
 if __name__ == "__main__":
 
+    Path("images").mkdir(exist_ok=True)
+
     results = avalanche(2000, 32, 20357)
 
     # B1: The avalanche effect
@@ -174,7 +177,7 @@ if __name__ == "__main__":
     plot_histogram(results, "images/b1_avalanche_histogram.png")
     print("\nSaved plot to images/b1_avalanche_histogram.png")
 
-        # B2: Birthday bound experiment
+    # B2: Birthday bound experiment
     print("\nB2 - The birthday bound")
 
     widths = [16, 20, 24, 28, 32, 36]
