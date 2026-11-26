@@ -30,7 +30,19 @@ The program displays the experimental measurements,
 calculates the fitted slope and saves both plots in
 the `images/` directory.
 
-[TO DO - Explain mac.py, forge.py and crack.py]
+To run the MAC and HMAC implementations from Part C:
+```bash
+python mac.py
+```
+To run the length-extension experiment from Part C1:
+```bash
+python forge.py
+
+```
+To run the password storage experiment from Part D:
+```bash
+python crack.py
+```
 
 ## 2. A3 - Resuming from a known state
 
@@ -40,7 +52,7 @@ the `images/` directory.
 ### Explanation
 Both results agree because the SHA-256 digest contains the internal state after processing the original message and its padding, allowing the algorithm to continue from that state. 
 
-This means that knowing a SHA-256 digest makes it possible to extend the hashed message without knowing its original contents.
+This means that knowing a SHA-256 digest and the original message length makes it possible to extend the hashed message without knowing its original contents.
 
 ### Verification
 Using `base = b"the first part"` and `suffix = b"and the rest"`, the original digest is:
@@ -153,27 +165,84 @@ results are consistent with the birthday bound.
 ## 5. C1 - The forgery
 
 ### Results
-[TO DO - Extended message in hexadecimal]
-[TO DO - Forged tag]
-[TO DO - Number of glue padding bytes and total extended message length]
+
+The server challenge was:
+
+- message: `user=student&role=guest&expires=2026-12-31`
+- tag: `7daa0c342759f55c15bd8acc4a97b17f0adf1dad91e6b862cb0050afbdd92824`
+- key length: 18 bytes
+- target suffix: `&role=admin`
+
+`forge()` computes the glue padding the server itself would have appended
+when hashing `key || msg` (based on the total length `keylen + len(msg)`),
+resumes SHA-256 from the state encoded in the given tag, and hashes only
+the suffix from there.
+
+| Parameter | Value |
+|---|---:|
+| Glue padding bytes | 68 |
+| Extended message length | 121 bytes |
+
+Extended message (hexadecimal):
+```
+757365723d73747564656e7426726f6c653d677565737426657870697265733d323032362d31322d333180000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001e026726f6c653d61646d696e
+```
+
+Forged tag:
+```
+b0464fec2a6ca6532b99e20da7f485d4ca0fb3ac10d39e0746d4c243b119d4d0
+```
+
+This was verified against `naive_verify` with a self-chosen 18-byte key
+in `tests/test_mac.py` (`test_forgery_verifies_with_chosen_key`), since
+the real server key is never available to us — the attack's correctness
+depends only on the key *length*, not its value.
 
 ### Question
 *What would you do if the key length had not been given to you?*
 
 ### Explanation
-[TO DO]
+Without the key length, the attacker does not know where to place the
+glue padding or how many bytes `state_from_digest` has already absorbed,
+so a single candidate forgery is not enough. The fix is to try every
+plausible key length one at a time (for example 1 to 64 bytes, or
+whatever range is reasonable for the system), computing `forge()` and
+submitting the resulting message to the server for each guess. Only the
+guess that matches the real key length produces a glue padding aligned
+with the one the server actually used when it first hashed `key || msg`,
+so only that one message is accepted — every other guess is rejected.
+This turns a single forgery into a brute-force search over key lengths,
+which is still cheap: it costs one SHA-256 call and one server request
+per candidate length, not per key value.
 
 ## 6. C2 - HMAC
 
 ### Results
-[TO DO - HMAC test vectors and verification that the
-length-extension attack fails against HMAC]
+`hmac_sha256()` was verified against the three published RFC 4231
+vectors (keys `0x0b`×20, `"Jefe"`, `"secret"`), all matching exactly —
+see `tests/test_mac.py::TestC2Hmac::test_rfc4231_vectors`.
+
+The same C1 attack was then run against an HMAC tag of the message
+`user=student&role=guest` with an 18-byte key, attempting to append
+`&role=admin`. The forged tag does **not** verify
+(`test_length_extension_fails_against_hmac`): `hmac_verify` returns
+`False` for the extended message.
 
 ### Question
 *Explain why the outer hash in HMAC prevents the length-extension attack.*
 
 ### Explanation
-[TO DO]
+HMAC is `H(opad⊕key || H(ipad⊕key || msg))`. An attacker who only sees
+the final tag knows the *output* of the outer hash, but that output is
+not itself a usable internal state: to extend it, the attacker would
+need to resume SHA-256 from the state `H(opad⊕key || ...)` encodes,
+which requires knowing `opad⊕key` — the exact bytes absorbed before the
+inner digest. That value depends on the secret key and is never
+revealed by the tag. In the naive MAC, by contrast, the tag *is*
+directly the internal state after absorbing `key || msg`, so resuming
+from it needs no secret at all, only the key's length. The outer hash
+in HMAC breaks that property: there is no secret-free way to continue
+hashing past it.
 
 ## 7. D1 - Password Storage
 
